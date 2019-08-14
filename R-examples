@@ -1,0 +1,152 @@
+d <- data.frame(x = 1:10, y = letters[1:10], z = LETTERS[1:10])
+d[1]
+d[, 1]
+d[, "x", drop = FALSE]
+d[c("x", "z")]
+d[d$x > 3, "y", drop = FALSE]
+d[2, ]
+
+##
+NA + 1
+sum(c(NA, 1, 2))
+median(c(NA, 1, 2, 3), na.rm = TRUE)
+length(c(NA, 2, 3, 4))
+3 == NA
+NA == NA
+TRUE | NA
+
+##
+length(c(1, 2, NULL, 4))
+sum(c(1, 2, NULL, 4))
+x <- NULL
+c(x, 2)
+
+##
+pi/0
+2 * Inf
+Inf - 1e+10
+Inf + Inf
+3 < -Inf
+Inf == Inf
+
+##
+NaN + 1
+exp(NaN)
+
+## Example1
+
+# first line is erroneously interpreted as column names
+(person <- read.csv("files/unnamed.txt"))
+## X21 X6.0
+## 1 42 5.9
+## 2 18 5.7*
+## 3 21 <NA>
+# so we better do the following
+person <- read.csv(
+file = "files/unnamed.txt"
+, header = FALSE
+, col.names = c("age","height") )
+person
+## age height
+## 1 21 6.0
+## 2 42 5.9
+## 3 18 5.7*
+## 4 21 <NA>
+
+## Example2
+
+dat <- read.csv(
+file = "files/unnamed.txt"
+, header = FALSE
+, col.names = c("age","height")
+, stringsAsFactors=FALSE)
+dat$height <- as.numeric(dat$height)
+## Warning: NAs introduced by coercion
+
+# detect lines starting with a percentage sign..
+I <- grepl("^%", txt)
+# and throw them out
+(dat <- txt[!I])
+## [1] "Gratt,1861,1892" "Bob,1892" "1871,Emmet,1937"
+
+#Splitting string
+(fieldList <- strsplit(dat, split = ","))
+## [[1]]
+## [1] "Gratt" "1861" "1892"
+## [[2]]
+## [1] "Bob" "1892"
+## [[3]]
+## [1] "1871" "Emmet" "1937"
+
+#Sample function
+assignFields <- function(x){
+out <- character(3)
+# get names
+i <- grepl("[[:alpha:]]",x)
+out[1] <- x[i]
+# get birth date (if any)
+i <- which(as.numeric(x) < 1890)
+out[2] <- ifelse(length(i)>0, x[i], NA)
+# get death date (if any)
+i <- which(as.numeric(x) > 1890)
+out[3] <- ifelse(length(i)>0, x[i], NA)
+out
+}
+
+#R class types
+class(c("abc", "def"))
+## [1] "character"
+class(1:10)
+## [1] "integer"
+class(c(pi, exp(1)))
+## [1] "numeric"
+class(factor(c("abc", "def")))
+## [1] "factor"
+
+typeof(c("abc", "def"))
+## [1] "character"
+typeof(1:10)
+## [1] "integer"
+typeof(c(pi, exp(1)))
+## [1] "double"
+typeof(factor(c("abc", "def")))
+## [1] "integer"
+
+#Labels
+# example:
+gender <- c(2, 1, 1, 2, 0, 1, 1)
+# recoding table, stored in a simple vector
+recode <- c(male = 1, female = 2)
+(gender <- factor(gender, levels = recode, labels = names(recode)))
+## [1] female male male female <NA> male male
+## Levels: male female
+
+#Re-level
+(gender <- relevel(gender, ref = "female"))
+## [1] female male male female <NA> male male
+## Levels: female male
+
+
+#Reordering
+age <- c(27, 52, 65, 34, 89, 45, 68)
+(gender <- reorder(gender, age))
+## [1] female male male female <NA> male male
+## attr(,"scores")
+## female male
+## 30.5 57.5
+## Levels: female male
+
+#Working with dates
+library(lubridate)
+dates <- c("15/02/2013", "15 Feb 13", "It happened on 15 02 '13")
+dmy(dates)
+## [1] "2013-02-15 UTC" "2013-02-15 UTC" "2013-02-15 UTC"
+
+dates <- c("15-9-2009", "16-07-2008", "17 12-2007", "29-02-2011")
+as.POSIXct(dates, format = "%d-%m-%Y")
+## [1] "2009-09-15 CEST" "2008-07-16 CEST" NA NA
+
+mybirth <- dmy("1 Dec 1986")
+format(mybirth, format = "I was born on %B %d, %Y")
+## [1] "I was born on December 1, 1986"
+
