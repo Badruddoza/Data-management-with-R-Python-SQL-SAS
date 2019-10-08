@@ -1,7 +1,7 @@
 /*select with multiple conditions at once*/
 SELECT * FROM t11 WHERE (co11, co12) IN ((2,3), (6,7)) ORDER BY pk;
 
-/*selecting dairy products according to Dr. Carlson*/ 
+/*selecting dairy products*/ 
 select distinct
 pos.deptid, pos.aisle, pos.product, pos.other 
 from FoodAPS.product_dictionary_pos_2016 pos
@@ -16,7 +16,7 @@ inner join FoodAPS.product_dictionary_ pos_2016 dic
 on sto.upc=dic.upc
 where dic.other like '%0RGANICV
 and dic.product like 'WHOLE MILM 
-and dic.category like 'S‘MILKV
+and dic.category like 'Sâ€˜MILKV
 order by iriweek asc
 limit 20;
 
@@ -33,7 +33,7 @@ from FoodAPS.pos_store_2016 sto
 inner join FoodAPS.product_dictionary_pos_2016 dic
 on sto.upc=dic.upc
 where dic.other like '%0RGANICV /*use "not like" here to get stats for non-organic*/ 
-and dic.category like 'S‘MILKV
+and dic.category like 'Sâ€˜MILKV
 group by dic.product, dic.tot_units
 order by avg(sto.cents/((dic.tot_volume*sto.Unit)*100)) desc;
 
@@ -90,7 +90,7 @@ FROM FoodAPS.product_dictionary_pos_2016
 WHERE aisle in('AISLE-DAIRY','AISLE-MILK')
 --select product variable that contains WHOLE MILK 
 and product like 'WHOLE MILM
-and category like 'S‘MILK%'
+and category like 'Sâ€˜MILK%'
 and other like '%0RGANIC%'
 order by upc asc /'asc for ascending use desc for descending'/
 
@@ -101,7 +101,7 @@ from FoodAPS.pos_store_2016, FoodAPS.product_dictionary_pos_2016
 where FoodAPS.pos_store_2016.upc=FoodAPS.product_dictionary_pos_2016.upc 
 and FoodAPS.product_dictionary_pos_2016.other like '%0RGANIC%'
 and FoodAPS.product_dictionary_pos_2016.product like 'WHOLE MILM 
-and FoodAPS.product_dictionary_pos_2016.category like 'S‘MILK%'
+and FoodAPS.product_dictionary_pos_2016.category like 'Sâ€˜MILK%'
 and FoodAPS.pos_store_2016.iriweek between 1900 and 1901
 
 /same code with aliases
@@ -110,8 +110,8 @@ select sto.IRIWeek, sto.upc, sto.Unit, sto.Cents, dic.other, dic.product, dic.br
 from FoodAPS.pos_store_2016 sto, FoodAPS.product_dictionary_pos_2016 dic
 where sto.upc=dic.upc
 and dic.other like '%0RGANIC%'
-and dic.product like 'WHOLE MILM 
-and dic.category like 'S‘MILK%'
+and dic.product like 'WHOLE MILK' 
+and dic.category like 'Sâ€˜MILK%'
 and sto.iriweek between 1900 and 1901 
 order by iriweek asc;
 
@@ -123,7 +123,7 @@ from FoodAPS.pos_store_2016 sto
 INNER join FoodAPS.product_dictionary_pos_2016 dic 
 on sto.upc=dic.upc
 where dic.other like '%0RGANIC%'
-and dic.product like 'WHOLE MILM
+and dic.product like 'WHOLE MILK'
 and dic.category like '%MILK%'
 and sto.iriweek between 1900 and 1901
 order by iriweek ASC
