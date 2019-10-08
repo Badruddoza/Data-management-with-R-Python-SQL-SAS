@@ -1,0 +1,166 @@
+/*select with multiple conditions at once*/
+SELECT * FROM t11 WHERE (co11, co12) IN ((2,3), (6,7)) ORDER BY pk;
+
+/*selecting dairy products according to Dr. Carlson*/ 
+select distinct
+pos.deptid, pos.aisle, pos.product, pos.other 
+from FoodAPS.product_dictionary_pos_2016 pos
+where deptid like '%DEPT-REFRIGERATEDV
+or pos.aisle like 'UISLE-DAIRYV
+order by pos.aisle, product;
+
+/* selecting first 20 observations of  organic whole milk and their attributes */ 
+select sto.IRIWeek, sto.upc, sto.Unit, sto.Cents, dic.other, dic.product, dic.brand
+from FoodAPS.pos_store_2016 sto
+inner join FoodAPS.product_dictionary_ pos_2016 dic
+on sto.upc=dic.upc
+where dic.other like '%0RGANICV
+and dic.product like 'WHOLE MILM 
+and dic.category like 'S‘MILKV
+order by iriweek asc
+limit 20;
+
+--see the number of rows in a table
+select count (*) from foodaps.pos_store_2016;
+--sum of cents in the table in week 1900
+select sum(cents) from foodaps.pos_store_2016 where iriweek=1900;
+--average cents received in a week by all stores in 2016
+select iriweek, avg(cents) from foodaps.pos_store_2016 group by iriweek order by iriweek asc;
+
+/*Avg. price of different types of organic milk Dollar per Ounce (OZ)*/
+select dic.product, avg(sto.cents/((dic.tot_volume*sto.Unit)*100)), dic.tot_units 
+from FoodAPS.pos_store_2016 sto
+inner join FoodAPS.product_dictionary_pos_2016 dic
+on sto.upc=dic.upc
+where dic.other like '%0RGANICV /*use "not like" here to get stats for non-organic*/ 
+and dic.category like 'S‘MILKV
+group by dic.product, dic.tot_units
+order by avg(sto.cents/((dic.tot_volume*sto.Unit)*100)) desc;
+
+/*create a temporary table that includes organic products only*/
+create local Temp TABLE IF NOT EXISTS temp_t1 on commit preserve rows as
+    select sto.iriweek, sto.storeid, dic.other 
+    from foodaps.pos_store2016 sto
+    join foodaps.product_dictionary_pos_2016 dic 
+    on sto.upc=dic.UPC
+    where dic.other like '%0RGANIC%';
+select count(*) from temp_t1;
+
+/*create a temporary view that includes organic products only*/ create local Temp View temp_v2 as
+create local Temp View temp_v2 as
+    select sto.iriweek, sto.storeid, dic.other
+    from foodaps.pos_store2016 sto
+    join foodaps.product_dictionary_pos_2016 dic
+    on sto.upc=dic.UPC
+    where dic.other like '%0RGANIC%';
+/*count the number of rows in that temporary view
+* this means total number of organic observations in 2016x/
+select count(*) from temp_v2;
+/* see what you created*/
+select x from temp_v2
+
+/*view the name of columns only*/
+select column_name from columns where table_name='Temp_t';
+
+/*see how many types of product in AISLE-DAIRY*/ 
+select category, count(upc)
+from FoodAPS.product_dictionary_pos_2016
+where aisle in ('AISLE-DAIRY')
+group by category
+
+/* see how many types of milk under milk category */ 
+select product, count(upc)
+from FoodAPS.product_dictionary_pos_2016
+where category like 'MILK%'
+group by product
+
+/* see how many types of organic milk under milk category */ 
+select product, count(upc)
+from FoodAPS.product_dictionary_pos_2016
+where other like '%0RGANICr and category like '%/4ILK%' 
+group by product
+select category from FoodAPS.product_dictionary_pos_2016 where aisle in('AISLE-DAIRY')
+
+/'distinctly select the following columns, p. before every column name'/
+SELECT DISTINCT UPC, aisle, category, product, brand, other
+/define the source and end with p'/ 
+FROM FoodAPS.product_dictionary_pos_2016
+/'set criteria of selecting observations'/
+--AISLE contains AISLE-DAIRY or AISLE-MILK 
+WHERE aisle in('AISLE-DAIRY','AISLE-MILK')
+--select product variable that contains WHOLE MILK 
+and product like 'WHOLE MILM
+and category like 'S‘MILK%'
+and other like '%0RGANIC%'
+order by upc asc /'asc for ascending use desc for descending'/
+
+/'select two weeks data of organic whole milk sales from 2016 
+M and match them with product dictionary'/
+select x
+from FoodAPS.pos_store_2016, FoodAPS.product_dictionary_pos_2016
+where FoodAPS.pos_store_2016.upc=FoodAPS.product_dictionary_pos_2016.upc 
+and FoodAPS.product_dictionary_pos_2016.other like '%0RGANIC%'
+and FoodAPS.product_dictionary_pos_2016.product like 'WHOLE MILM 
+and FoodAPS.product_dictionary_pos_2016.category like 'S‘MILK%'
+and FoodAPS.pos_store_2016.iriweek between 1900 and 1901
+
+/same code with aliases
+ sto for store data and dic for dictionary data'/
+select sto.IRIWeek, sto.upc, sto.Unit, sto.Cents, dic.other, dic.product, dic.brand 
+from FoodAPS.pos_store_2016 sto, FoodAPS.product_dictionary_pos_2016 dic
+where sto.upc=dic.upc
+and dic.other like '%0RGANIC%'
+and dic.product like 'WHOLE MILM 
+and dic.category like 'S‘MILK%'
+and sto.iriweek between 1900 and 1901 
+order by iriweek asc;
+
+/'same above can be achieved by using JOIN ON command'/
+select sto.IRIWeek, sto.upc, sto.Unit, sto.Cents, dic.other, dic.product, dic.brand 
+from FoodAPS.pos_store_2016 sto
+--inner join returns completely matched upc
+--outer join returns all rows
+INNER join FoodAPS.product_dictionary_pos_2016 dic 
+on sto.upc=dic.upc
+where dic.other like '%0RGANIC%'
+and dic.product like 'WHOLE MILM
+and dic.category like '%MILK%'
+and sto.iriweek between 1900 and 1901
+order by iriweek ASC
+LIMIT 20;
+
+
+
+/*select only two weeks store scan data 1900 and 1901 in 2016 
+*where upc matches the ones in product dictionary 2016
+*and contains whole organic milk only*/
+select *
+from FoodAPS.pos_store_2016, FoodAPS.product_dictionary_pos_2016 
+where upc in(select upc from FoodAPS.product_dictionary_pos_2016 
+where other like '%0RGANIC%' and product like '%WHOLE MILK%' and category like '%MILK%')
+and iriweek between 1900 and 1901
+
+/* counting number of whole milk products with 'organic' label in the dictionary
+*  and number of whole milk products in total in 2016*/
+select COUNT(other) from FoodAPS.product_dictionary_pos_2016 where other like '%0RGANIC%' and product like '%WHOLE MILK%' and category like '%MILK%' 
+union ALL
+select COUNT(other) from FoodAPS.product_dictionary_pos_2016 where product like '%WHOLE MILK%' and category like '%MILK%'
+
+/*combine store information  of year 2015 and year 2016*/ 
+select * from foodaps.store_ info_16 where StoreID=59421
+union ALL
+select * from foodaps.store_ info_15 where StoreID=59421
+
+
+/*select minimum and maximum of IRIWeek variable between a range of FirstDay0fWeek from file FoodAPS.IRIWeek2016*/ 
+select MIN(IRIWeek),MAX(IRIWeek)
+from FoodAPS.IRIWeek2016
+Where FirstDay0fWeek
+BETWEEN '2016-01-01'
+and '2016-12-31';
+
+select a.FirstDay0fWeek, b.Unit, c.UPCDesc
+from FoodAPS.IRIWeek a inner join FoodAPS.pos_store b on a.IRIWeek=b.IRIWeek 
+inner join FoodAPS.product_dictionary_pos c on b.UPC=c.UPC
+where c.aisle='AISLE-SNACKS'
+order by a.FirstDay0fWeek;
