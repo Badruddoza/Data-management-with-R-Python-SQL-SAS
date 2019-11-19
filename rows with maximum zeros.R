@@ -16,4 +16,9 @@ for(i in 1:num_row){
 res<-cbind.data.frame(zeros=num_col-sum,serial=rep(1:num_col))
 ii<-res[which(res[,1]==max(res[,1])),2]
 print("Row(s) with maximum zeros:")
-paste(ii)
+paste(ii);
+
+# The same thing can be done by one line code
+rm(list=ls())
+n_row=4;n_col=5
+which.max(rowSums( matrix(c(rep(rbinom(n_row*n_col,1,.5))),n_row,n_col) ))
