@@ -21,4 +21,4 @@ paste(ii);
 # The same thing can be done by one line code
 rm(list=ls())
 n_row=4;n_col=5
-which.max(rowSums( matrix(c(rep(rbinom(n_row*n_col,1,.5))),n_row,n_col) ))
+which.max(-rowSums( matrix(c((rbinom(n_row*n_col,1,.5))),n_row,n_col) ))
