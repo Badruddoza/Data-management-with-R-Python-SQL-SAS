@@ -1,0 +1,52 @@
+rm(list=ls())
+# data wrangling
+library(tidyverse)
+library(readr)
+
+# ml
+library(caret)
+
+# plotting
+library(gridExtra)
+library(grid)
+#install.packages("ggridges")
+library(ggridges)
+#install.packages("ggthemes")
+library(ggthemes)
+theme_set(theme_minimal())
+
+# explaining models
+# https://github.com/christophM/iml
+library(iml)
+
+# https://pbiecek.github.io/breakDown/
+library(breakDown)
+
+########### EXPLORATORY ANALYSIS
+setwd("F:/healthy retail")
+data=read.csv("rdata_Deswamp.csv")
+data=data[1:3000,]
+head(data)
+data<-data %>%
+  mutate(mrfei=as.factor(ifelse(mrfei==1,"Desert","Swamp")))
+
+#colnames(data)<-gsub(" ","_",colnames(data))
+#glimpse(data)
+
+p1<-data %>%
+ ggplot(aes(x=mrfei,fill=mrfei))+
+  geom_bar(alpha=0.8)+
+  scale_fill_tableau()+
+  guides(fill=FALSE)
+p1
+head(data)
+
+p2 <- data %>%
+  gather(x, y, B05001v3:tractsnap) %>%
+  ggplot(aes(x = y, y = mrfei, color = mrfei, fill = mrfei)) +
+  facet_wrap( ~ x, scale = "free", ncol = 3) +
+  scale_fill_tableau() +
+  scale_color_tableau() +
+  geom_density_ridges(alpha = 0.8) +
+  guides(fill = FALSE, color = FALSE)
+p2
