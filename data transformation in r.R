@@ -195,3 +195,12 @@ colnames(flights1)[apply(flights1,2,anyNA)]
 flights1$dep_delay[is.na(flights1$dep_delay)]<-0
 # missing values are gone!
 colnames(flights1)[apply(flights1,2,anyNA)]
+
+# Summarize with last non-missing value
+d<-data.frame(matrix(c("a","a","a","b","b",NA,5,1,3,4),ncol=2))
+d
+d %>%
+  mutate_all(as.character) %>%
+  group_by(X1) %>%
+  summarise_all(~last(.[!is.na(.)])) %>%
+  ungroup()
