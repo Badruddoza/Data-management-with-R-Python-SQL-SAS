@@ -1,0 +1,2 @@
+# Row means of selected
+mutate(mean_e=rowMeans(select(.,starts_with("el_")),na.rm=T)
