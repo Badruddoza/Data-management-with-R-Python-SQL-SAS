@@ -1,0 +1,27 @@
+# Example of using month data
+
+rm(list=ls())
+getwd()
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+dt<-read.table("honda.txt",sep=",",header=T,stringsAsFactors = F)
+dt %>% head()
+gdt<-dt %>% 
+  gather(key="month",value="sales",c(-1)) %>% 
+  mutate(date=as.Date(paste0(month,"/01/",as.character(yr)),format='%B/%d/%y' )) %>% 
+  mutate(month=month(date)) %>% 
+  mutate(sales=ifelse(sales==0,NA,sales),sales=sales/1000) %>% 
+  mutate(Sample=ifelse(yr=="2020","2020",ifelse(yr==2019,"2019","Previous years")),Sample=as.character(Sample))
+
+ggplot(gdt,
+       aes(x=as.factor(month),y=sales,group=yr,color=Sample))+
+  geom_line(size=1)+
+  scale_color_manual(values=c("2020"="red","2019"="red4","Previous years"="grey"))+
+  theme_classic()+
+  scale_x_discrete(labels=month.abb)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x="Month",y="Sales in thousand units",
+       title="Honda Monthly Sales",subtitle="(Year 2005-2020)",
+       caption="Data source: goodcarbadcar.net")
+ggsave("Honda_sales.png",width = 7,height = 7)
