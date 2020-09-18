@@ -1,0 +1,34 @@
+## Using USDA NASS data
+rm(list=ls())
+
+#install.packages("devtools")
+library(devtools)
+#install_github('ropensci/rnassqs')
+library(rnassqs)
+
+your_api_key=<your_API_key_goes_here>
+
+Sys.setenv("NASSQS_TOKEN"=your_api_key)
+
+# Obtain API key beforehand from here https://quickstats.nass.usda.gov/api
+nassqs_auth(key=your_api_key)
+
+
+
+# Parameters to query on and data call
+params <- list(commodity_desc = "CORN", year__GE = 2012, state_alpha = "VA")
+
+d<-nassqs(params)
+
+
+
+params = list("commodity_desc"="CORN", "year__GE"=2012, "state_alpha"="VA")
+d = nassqs(params=cash_rent_cropland_irr, key=your_api_key)
+
+
+cash_rent_cropland_irr = list(sector_desc = "ECONOMICS",
+                              commodity_desc = "RENT",
+                              prodn_practice_desc = "IRRIGATED",
+                              class_desc = "CASH, CROPLAND",
+                              agg_level_desc = "COUNTY",
+                              year__GE = 1997)
