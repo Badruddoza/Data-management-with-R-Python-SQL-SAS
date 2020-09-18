@@ -1,0 +1,18 @@
+rm(list=ls())
+require(dplyr)
+
+fipslist<-read.csv(file="https://www2.census.gov/geo/docs/reference/codes/files/national_county.txt",header=FALSE) %>%
+  mutate(FIPS_state=ifelse(V2<10,paste0("0",V2),paste0(V2)),
+         FIPS_county=ifelse(V3<10,paste0("00",V3),
+                            ifelse(V3<100,paste0("0",V3),paste0(V3))),
+         FIPS=paste0(FIPS_state,FIPS_county)) %>% 
+  filter(!FIPS_state %in% c("60", "66", "69", "72", "74", "78"))
+
+
+# Converting the fipslist into a unique list of 2-digit state ID's #
+stateid=unlist(list(unique(fipslist$FIPS_state)))
+# Converting the fipslist into a unique list of 5-digit county ID's #
+countyid=unlist(list(unique(fipslist$FIPS_county)))
+
+stateid
+countyid
