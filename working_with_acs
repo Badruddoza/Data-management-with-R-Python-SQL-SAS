@@ -1,0 +1,52 @@
+rm(list=ls())
+#install.packages("tidyverse")
+#library(tidyverse)
+#install.packages("tidycensus")
+library(tidycensus)
+library(dplyr)
+library(ggplot2)
+
+#census_api_key("<YOUR API KEY>", overwrite=F, install=T)
+#readRenviron("~/.Renviron")
+#Sys.getenv("CENSUS_API_KEY")
+
+get_acs(geography = "county",state = "MD",year = 2020,survey = "acs1",variables = c(mhi = "B19013_001")) 
+
+data("fips_codes")
+fips_codes %>% head()
+class(fips_codes$county_code)
+
+
+# Household income by county in vermont
+vt<-get_acs(geography = "county",state = "VT",year=2018,survey="acs5",variables = "B19013_001")
+vt %>%
+  mutate(NAME = gsub(" County, Vermont", "", NAME)) %>%
+  ggplot(aes(x = estimate, y = reorder(NAME, estimate))) +
+  geom_errorbarh(aes(xmin = estimate - moe, xmax = estimate + moe)) +
+  geom_point(color = "red", size = 3) +
+  labs(title = "Household income by county in Vermont",
+       subtitle = "2012-2016 American Community Survey",
+       y = "",
+       x = "ACS estimate (bars represent margin of error)")
+
+
+# Plot of race/ethnicity by county in Illinois for 2010
+vars10 <- c("P005003", "P005004", "P005006", "P004003")
+il <- get_decennial(geography = "county", variables = vars10, year = 2010,
+                    summary_var = "P001001", state = "IL", geometry = TRUE) %>%
+  mutate(pct = 100 * (value / summary_value))
+ggplot(il, aes(fill = pct, color = pct)) +
+  geom_sf() +
+  facet_wrap(~variable)
+
+
+# Load variables for viewing
+v15 <-load_variables(2019, "acs1", cache =F)
+View(v15)
+
+# geometry
+data("state_laea")
+plot(state_laea)
+
+data("county_laea")
+plot(county_laea)
