@@ -1,0 +1,31 @@
+rm(list=ls())
+#install.packages("smotefamily")
+library(smotefamily)
+
+data_example = sample_generator(10000,ratio = 0.80)
+
+data_example %>% head()
+class(data_example$result)
+table(data_example$result)
+
+#ADAS(X, target, K=5 is default number of nearest neighbors during sampling process)
+genData = ADAS(data_example[,-3],data_example[,3])
+
+table(genData$data$class) #data is the resulting data set. syn_data is a set of synthetic minority instances
+
+genData_2 = ADAS(data_example[,-3],data_example[,3],K=7)
+
+table(genData_2$data$class)
+
+
+#SMOTE(X, target, K=5, dup_size=0)
+# dup_size is the number or vector representing the desired times of synthetic minority instances
+# over the original number of majority instances
+
+genData_3=SMOTE(data_example[,-3],data_example[,3])
+
+table(data_example$result)
+table(genData_3$data$class)
+
+genData_4=SMOTE(data_example[,-3],data_example[,3],K=7)
+table(genData_4$data$class)
