@@ -13,7 +13,8 @@ aws.signature::locate_credentials()
 Sys.setenv("AWS_ACCESS_KEY_ID" = "<>",
            "AWS_SECRET_ACCESS_KEY" = "<>",
            "AWS_DEFAULT_REGION" = "<>",
-           "SESSION_TOKEN"="<your token>")
+           "AWS_SESSION_TOKEN"="<your token>")
+           
 
 aws.signature::locate_credentials()
 
