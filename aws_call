@@ -1,0 +1,23 @@
+rm(list=ls())
+
+######## Using amazon web services from R
+# latest stable version
+#install.packages("aws.ec2", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
+#install.packages("aws.ec2metadata")
+# description is in https://github.com/cloudyr/aws.ec2
+
+library(aws.ec2)
+# Describe the AMI (from: http://www.louisaslett.com/RStudio_AMI/)
+aws.signature::locate_credentials()
+
+Sys.setenv("AWS_ACCESS_KEY_ID" = "<>",
+           "AWS_SECRET_ACCESS_KEY" = "<>",
+           "AWS_DEFAULT_REGION" = "<>",
+           "SESSION_TOKEN"="<your token>")
+
+aws.signature::locate_credentials()
+
+# Describe the AMI (from: http://www.louisaslett.com/RStudio_AMI/)
+image <- "ami-3b0c205e" # us-east-1
+#image <- "ami-93805fea" # eu-west-1
+describe_images(image)
