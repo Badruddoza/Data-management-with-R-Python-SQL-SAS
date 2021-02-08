@@ -1,0 +1,70 @@
+rm(list=ls())
+
+# get the list of safegraphs data. which column do you need. download the .gz file and use the following codes to open .gz files
+
+#install.packages('data.table')
+#install.packages('R.utils')
+#install.packages('bit64')
+#install.packages('maps')
+#install.packages('maptools')
+#install.packages('rgeos')
+
+library(sp)
+require(rgeos)
+library(maps)
+library(maptools)
+require(dplyr)
+require(tidyverse)
+
+
+setwd("C:/Users/syedb/Downloads/")
+#setwd("C:/Users/syedb/Downloads/Core-USA-July2020-Release-CORE_POI-2020_06-2020-07-13 (1)")
+
+
+a<-list.files()
+a
+a[which(grepl(".gz",a))]
+b<-a[which(grepl(".gz",a))][3]
+b
+
+#b<-a[which(grepl("gz",a))][2]
+c<-data.table::fread(b)
+View(c)
+
+b<-a[which(grepl("csv",a))]
+read.table(b[2],sep=",",header=T)
+
+
+# Function for converting lat/lon to county
+# Source: https://stackoverflow.com/questions/13316185/r-convert-zipcode-or-lat-long-to-county
+latlong2county <- function(pointsDF) {
+  # Prepare SpatialPolygons object with one SpatialPolygon per county
+  counties <- maps::map('county', fill=TRUE, col="transparent", plot=FALSE)
+  IDs <- sapply(strsplit(counties$names, ":"), function(x) x[1])
+  counties_sp <- maptools::map2SpatialPolygons(counties, IDs=IDs, proj4string=CRS("+proj=longlat +datum=WGS84"))
+  # Convert pointsDF to a SpatialPoints object
+  pointsSP <- sp::SpatialPoints(pointsDF, proj4string=CRS("+proj=longlat +datum=WGS84"))
+  # Use 'over' to get _indices_ of the Polygons object containing each point
+  indices <- sp::over(pointsSP, counties_sp)
+  # Return the county names of the Polygons object containing each point
+  countyNames <- sapply(counties_sp@polygons, function(x) x@ID)
+  countyNames[indices]
+}
+conversion.wrapper <- function(core.df) {
+  # Wrapper function that calls latlong2county on a core POI dataframe,
+  # find the county names, and rebinds with the safegraph ID and NAICS code
+  core.sub <- core.df %>% select(safegraph_place_id, naics_code, longitude, latitude)
+  lat.lon <- core.df %>% select(longitude, latitude)
+  names <- tibble::enframe(latlong2county(lat.lon), value="result") %>% 
+    select(-c(name)) %>% 
+    separate(result, c("state", "county"), sep=",")
+  paired <- cbind(core.sub, names)
+  paired
+}
+
+
+d<-conversion.wrapper(c)
+
+c<-c %>% filter(iso_country_code=="US")
+
+c %>% View()
