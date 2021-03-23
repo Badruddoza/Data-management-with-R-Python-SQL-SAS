@@ -1,0 +1,33 @@
+/*https://www.sqltutorial.org/sql-cheat-sheet/*/
+/*creating sql table https://www.db-fiddle.com/*/
+
+CREATE TABLE table1 (
+  `id` INTEGER,
+  `name` VARCHAR(4),
+  `age` INTEGER
+);
+
+INSERT INTO table1
+  (`id`, `name`, `age`)
+VALUES
+  ('1', 'John', '23'),
+  ('2', 'Jane', '21'),
+  ('3', 'Bob', '30');
+
+
+
+CREATE TABLE table2 (
+  `id` INTEGER,
+  `email` VARCHAR(12)
+);
+
+INSERT INTO table2
+  (`id`, `email`)
+VALUES
+  ('1', 'john@ttu.edu'),
+  ('2', 'Jane@wsu.edu'),
+  ('4', 'mark@wb.edu');
+  
+  
+SELECT * from table1 a
+INNER JOIN table2 b ON a.id=b.id;
