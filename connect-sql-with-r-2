@@ -1,0 +1,17 @@
+# Connecting SQL with R
+
+rm(list=ls())
+set.seed(123)
+
+install.packages("odbc")
+install.packages("DBI")
+
+library(odbc)
+library(DBI)
+
+
+con<-dbConnect(odbc::odbc(),"Your Schema",UID="Your ID",PWD="Your password")
+
+qry<-paste0("SELECT * FROM TABLE1")
+
+data<-dbGetQuery(con,qry)
