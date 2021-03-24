@@ -48,3 +48,13 @@ for(i in numbers){
     error=function(e){print("You are stupid! You put a string!")}
   )
 }
+
+# don't stop the loop
+
+for(i in numbers){
+  tryCatch(
+    {print(sqrt(i))},
+    warning=function(w){print("There was a warning")},
+    error=function(e){print("An error found")}
+  )
+}
