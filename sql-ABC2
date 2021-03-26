@@ -1,0 +1,35 @@
+/*https://sqliteonline.com/*/
+
+CREATE TABLE table1 (
+  `upc` INTEGER,
+  `year` INTEGER,
+  `sales` VARCHAR(4)
+);
+
+INSERT INTO table1
+  (`upc`, `year`, `sales`)
+VALUES
+  ('1', '2013', '600'),
+  ('1', '2014', '600'),
+  ('1', '2018', '600');
+
+CREATE TABLE table2 (
+  `upc` INTEGER,
+  `year` INTEGER,
+  `upcdesc` VARCHAR(4)
+);
+
+INSERT INTO table2
+  (`upc`, `year`, `upcdesc`)
+VALUES
+  ('1', '2013', 'description'),
+  ('1', '2014', 'description'),
+  ('1', '2018', 'description');
+
+SELECT * from 
+(SELECT * FROM table1 WHERE year=2018) a
+INNER JOIN table2 b on a.upc=b.upc;
+
+SELECT * from 
+(SELECT * FROM table1 WHERE year=2018) a
+INNER JOIN table2 b on a.upc=b.upc AND a.year=b.year;
