@@ -1,0 +1,3 @@
+# set current directory as the working directory
+
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
