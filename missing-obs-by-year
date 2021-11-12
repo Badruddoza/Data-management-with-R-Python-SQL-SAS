@@ -1,0 +1,9 @@
+# check for missing observations by year
+
+dt<-dataframe()
+
+for(i in 1:dim(dt)[2]){
+  print(names(dt)[i])
+  a<-table(!is.na(dt[,i]),dt$year)
+  print(a)
+}
