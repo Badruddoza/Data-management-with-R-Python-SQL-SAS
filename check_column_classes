@@ -1,0 +1,2 @@
+#x is data
+for(i in 1:ncol(x)){print(names(x)[i]); print(class(x[,i]))}
