@@ -1,0 +1,3 @@
+drop table if exists table0;
+create local temp table table0 on commit preserve rows as 
+select distinct upc as upc0, per_unit_volume from table1;
