@@ -1,2 +1,2 @@
-x<-"9,900D"
+x<-"9,900.032Dollars"
 ifelse(grepl('^[0-9]',x)==T,as.numeric(gsub(",|[a-zA-Z]","",x)),NA)
