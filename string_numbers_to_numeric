@@ -1,0 +1,2 @@
+x<-"9,900D"
+ifelse(grepl('^[0-9]',x)==T,as.numeric(gsub(",|[a-zA-Z]","",x)),NA)
